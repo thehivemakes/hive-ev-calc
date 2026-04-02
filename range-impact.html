@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Range Impact Calculator — EVCalc</title>
+<meta name="description" content="EV range impact calculator. See how cold weather, speed, and HVAC reduce your real range. Free tool.">
+<meta property="og:title" content="Range Impact Calculator — EVCalc">
+<meta property="og:description" content="EV range impact calculator. See how cold weather, speed, and HVAC reduce your real range. Free tool.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://thehivemakes.github.io/hive-ev-calc/range-impact.html">
+<link rel="stylesheet" href="style.css">
+<script src="js/calc-core.js"></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Range Impact Calculator",
+  "url": "https://thehivemakes.github.io/hive-ev-calc/range-impact.html",
+  "description": "EV range impact calculator. See how cold weather, speed, and HVAC reduce your real range. Free tool.",
+  "applicationCategory": "UtilityApplication",
+  "operatingSystem": "Any"
+}
+</script>
+</head>
+<body>
+<header><div class="header-inner"><div class="logo">EV<span>Calc</span></div><div class="tagline">Free EV calculators</div></div></header>
+<nav><div class="nav-inner"><a href="index.html">EVCalc</a><span class="sep">/</span><span>Range Impact Calculator</span></div></nav>
+<main>
+  <div class="ad-leaderboard" id="ad-top">Ad</div>
+  <div class="card">
+    <h1>Range Impact Calculator</h1>
+    <p class="subtitle">Enter EPA range, temperature, and speed to estimate actual range.</p>
+    <div class="form-grid">
+      <div class="field">
+        <label for="epa_range">EPA rated range (miles)</label>
+        <input type="number" id="epa_range" step="1" placeholder="300">
+      </div>
+      <div class="field">
+        <label for="temp_f">Outside temperature (°F)</label>
+        <input type="number" id="temp_f" step="1" placeholder="70">
+      </div>
+      <div class="field">
+        <label for="speed_mph">Average speed (mph)</label>
+        <input type="number" id="speed_mph" step="5" placeholder="65" value="65">
+      </div>
+      <div class="field">
+        <label for="hvac_on">HVAC (heat/AC)</label>
+        <select id="hvac_on"><option value="0">Off</option><option value="1">On</option></select>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="calculate()">Calculate</button>
+    <button class="btn btn-ghost" onclick="clearAll()">Clear</button>
+    <div class="result" id="result">
+      <div class="result-row">
+        <span class="result-label">Estimated actual range</span>
+        <span class="result-value" id="ri-actual">—</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Range retention</span>
+        <span class="result-value" id="ri-pct">—</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Range loss</span>
+        <span class="result-value" id="ri-loss">—</span>
+      </div>
+      <div class="result-note">Cold weather (below 40°F) can reduce range 20–40%. Highway speeds above 70 mph reduce range 10–20%. HVAC adds another 5–15% loss. These effects compound.</div>
+    </div>
+  </div>
+
+  <div class="ad-rectangle" id="ad-mid">Ad</div>
+  <div class="seo-section">
+    <h2>How Temperature and Speed Affect EV Range</h2>
+    <p>EPA range is tested under ideal conditions. Real-world range is affected by temperature (battery chemistry is less efficient in cold), speed (aerodynamic drag increases with the square of speed), and HVAC use.</p>
+    <p>At 20°F with heating on and highway driving at 70 mph, many EVs see 35–45% range reduction. Plan charging stops accordingly in winter.</p>
+  </div>
+</main>
+<footer>Free EV calculators. No signup, no tracking. Actual values vary by vehicle, battery condition, and driving habits.<br>Built by <a href="https://thehivemakes.github.io/" style="color:var(--accent)">The Hive</a></footer>
+<script>
+
+function calculate() {
+  const epa = CalcCore.get('epa_range');
+  const temp = CalcCore.get('temp_f');
+  const speed = CalcCore.get('speed_mph');
+  const hvac = parseInt(CalcCore.getSelect('hvac_on'));
+  if (isNaN(epa)||isNaN(temp)||isNaN(speed)||epa<=0) return;
+
+  let factor = 1.0;
+  // Temperature impact (baseline 70F)
+  if (temp < 20) factor *= 0.60;
+  else if (temp < 32) factor *= 0.70;
+  else if (temp < 50) factor *= 0.85;
+  else if (temp < 60) factor *= 0.92;
+  else if (temp > 95) factor *= 0.90;
+  else if (temp > 85) factor *= 0.95;
+  // Speed impact (baseline 65mph EPA mix)
+  if (speed > 80) factor *= 0.78;
+  else if (speed > 75) factor *= 0.83;
+  else if (speed > 70) factor *= 0.88;
+  else if (speed > 65) factor *= 0.93;
+  else if (speed < 40) factor *= 1.10;
+  // HVAC
+  if (hvac && (temp < 50 || temp > 85)) factor *= 0.90;
+  else if (hvac) factor *= 0.95;
+
+  const actual = epa * factor;
+  const loss = epa - actual;
+  const pct = factor * 100;
+
+  CalcCore.set('ri-actual', CalcCore.fmtInt(actual) + ' miles');
+  CalcCore.set('ri-pct', CalcCore.fmt(pct, 0) + '% of EPA range');
+  CalcCore.set('ri-loss', CalcCore.fmtInt(loss) + ' miles lost');
+  CalcCore.showResult();
+  CalcCore.saveParams(['epa_range','temp_f','speed_mph','hvac_on']);
+}
+
+function clearAll() {
+  ["epa_range", "temp_f", "speed_mph", "hvac_on"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = el.defaultValue || '';
+  });
+  document.getElementById('result').classList.remove('visible');
+  history.replaceState(null, '', window.location.pathname);
+}
+
+document.addEventListener('DOMContentLoaded', () => { if (window.location.search) calculate(); });
+</script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Charging Time Calculator — EVCalc</title>
+<meta name="description" content="EV charging time calculator. Enter battery size and charger power to find charge duration. Level 1, 2, and DC fast. Free tool.">
+<meta property="og:title" content="Charging Time Calculator — EVCalc">
+<meta property="og:description" content="EV charging time calculator. Enter battery size and charger power to find charge duration. Level 1, 2, and DC fast. Free tool.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://thehivemakes.github.io/hive-ev-calc/charging-time.html">
+<link rel="stylesheet" href="style.css">
+<script src="js/calc-core.js"></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Charging Time Calculator",
+  "url": "https://thehivemakes.github.io/hive-ev-calc/charging-time.html",
+  "description": "EV charging time calculator. Enter battery size and charger power to find charge duration. Level 1, 2, and DC fast. Free tool.",
+  "applicationCategory": "UtilityApplication",
+  "operatingSystem": "Any"
+}
+</script>
+</head>
+<body>
+<header><div class="header-inner"><div class="logo">EV<span>Calc</span></div><div class="tagline">Free EV calculators</div></div></header>
+<nav><div class="nav-inner"><a href="index.html">EVCalc</a><span class="sep">/</span><span>Charging Time Calculator</span></div></nav>
+<main>
+  <div class="ad-leaderboard" id="ad-top">Ad</div>
+  <div class="card">
+    <h1>Charging Time Calculator</h1>
+    <p class="subtitle">Enter battery size, current charge, target charge, and charger power.</p>
+    <div class="form-grid">
+      <div class="field">
+        <label for="batt_kwh">Battery capacity (kWh)</label>
+        <input type="number" id="batt_kwh" step="1" placeholder="75">
+      </div>
+      <div class="field">
+        <label for="charge_from">Charge from (%)</label>
+        <input type="number" id="charge_from" min="0" max="100" step="1" placeholder="20" value="20">
+      </div>
+      <div class="field">
+        <label for="charge_to">Charge to (%)</label>
+        <input type="number" id="charge_to" min="0" max="100" step="1" placeholder="80" value="80">
+      </div>
+      <div class="field">
+        <label for="charger_kw">Charger power (kW)</label>
+        <select id="charger_kw"><option value="1.4">Level 1 (120V, 1.4 kW)</option><option value="7.7">Level 2 (240V, 32A, 7.7 kW)</option><option value="11.5">Level 2 (240V, 48A, 11.5 kW)</option><option value="50">DC Fast (50 kW)</option><option value="150">DC Fast (150 kW)</option><option value="250">DC Fast (250 kW)</option></select>
+      </div>
+      <div class="field">
+        <label for="efficiency">Charging efficiency (%)</label>
+        <input type="number" id="efficiency" step="1" placeholder="90" value="90">
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="calculate()">Calculate</button>
+    <button class="btn btn-ghost" onclick="clearAll()">Clear</button>
+    <div class="result" id="result">
+      <div class="result-row">
+        <span class="result-label">Energy needed</span>
+        <span class="result-value" id="ct-kwh">—</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Estimated charge time</span>
+        <span class="result-value" id="ct-time">—</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Miles of range per hour of charging</span>
+        <span class="result-value" id="ct-mph">—</span>
+      </div>
+      <div class="result-note">Time = (kWh needed) / (charger kW × efficiency). DC fast charging slows above 80% SOC. Level 1 is best for overnight top-ups. Level 2 is the home charging sweet spot.</div>
+    </div>
+  </div>
+  <div class="card">
+    <h2 style="font-size:16px;font-weight:700;margin-bottom:12px;">Charger Speeds</h2>
+    <table class="ref-table" id="ref-table">
+      <thead><tr><th>Level</th><th>Power</th><th>Miles/Hour</th><th>Use Case</th></tr></thead>
+      <tbody>
+        <tr><td>Level 1 (120V)</td><td>1.2–1.4 kW</td><td>3–5 mi/hr</td><td>Emergency / overnight</td></tr>
+        <tr><td>Level 2 (240V 32A)</td><td>7.7 kW</td><td>25–30 mi/hr</td><td>Home overnight</td></tr>
+        <tr><td>Level 2 (240V 48A)</td><td>11.5 kW</td><td>35–45 mi/hr</td><td>Home fast</td></tr>
+        <tr><td>DC Fast 50kW</td><td>50 kW</td><td>150–200 mi/hr</td><td>Road trip stop</td></tr>
+        <tr><td>DC Fast 150kW</td><td>150 kW</td><td>400–600 mi/hr</td><td>Quick top-up</td></tr>
+        <tr><td>DC Fast 250kW</td><td>250 kW</td><td>700–1000 mi/hr</td><td>Ultra-fast</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="ad-rectangle" id="ad-mid">Ad</div>
+  <div class="seo-section">
+    <h2>How Long Does It Take to Charge an EV?</h2>
+    <p>EV charging time depends on three factors: battery size, charger power, and charging efficiency. A 75 kWh battery charging from 20% to 80% needs 45 kWh of energy.</p>
+    <p>At Level 2 (7.7 kW), that takes about 6.5 hours. At a 150 kW DC fast charger, about 20 minutes. DC fast charging slows significantly above 80% state of charge to protect the battery.</p>
+  </div>
+</main>
+<footer>Free EV calculators. No signup, no tracking. Actual values vary by vehicle, battery condition, and driving habits.<br>Built by <a href="https://thehivemakes.github.io/" style="color:var(--accent)">The Hive</a></footer>
+<script>
+
+function calculate() {
+  const batt = CalcCore.get('batt_kwh');
+  const from = CalcCore.get('charge_from') / 100;
+  const to = CalcCore.get('charge_to') / 100;
+  const charger = parseFloat(CalcCore.getSelect('charger_kw'));
+  const eff = CalcCore.get('efficiency') / 100;
+  if (isNaN(batt)||isNaN(charger)||batt<=0||charger<=0||from>=to) return;
+
+  const kwhNeeded = batt * (to - from);
+  const hours = kwhNeeded / (charger * eff);
+  const miPerKwh = 3.5; // avg EV efficiency
+  const milesPerHour = charger * eff * miPerKwh;
+
+  const h = Math.floor(hours);
+  const m = Math.round((hours - h) * 60);
+  CalcCore.set('ct-kwh', CalcCore.fmt(kwhNeeded, 1) + ' kWh');
+  CalcCore.set('ct-time', h + 'h ' + m + 'm');
+  CalcCore.set('ct-mph', CalcCore.fmtInt(milesPerHour) + ' miles/hour of charging');
+  CalcCore.showResult();
+  CalcCore.saveParams(['batt_kwh','charge_from','charge_to','charger_kw','efficiency']);
+}
+
+function clearAll() {
+  ["batt_kwh", "charge_from", "charge_to", "charger_kw", "efficiency"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = el.defaultValue || '';
+  });
+  document.getElementById('result').classList.remove('visible');
+  history.replaceState(null, '', window.location.pathname);
+}
+
+document.addEventListener('DOMContentLoaded', () => { if (window.location.search) calculate(); });
+</script>
+</body>
+</html>

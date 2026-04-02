@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Battery Degradation Estimator — EVCalc</title>
+<meta name="description" content="EV battery degradation calculator. Estimate remaining capacity after years of driving. Free tool.">
+<meta property="og:title" content="Battery Degradation Estimator — EVCalc">
+<meta property="og:description" content="EV battery degradation calculator. Estimate remaining capacity after years of driving. Free tool.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://thehivemakes.github.io/hive-ev-calc/battery-degradation.html">
+<link rel="stylesheet" href="style.css">
+<script src="js/calc-core.js"></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Battery Degradation Estimator",
+  "url": "https://thehivemakes.github.io/hive-ev-calc/battery-degradation.html",
+  "description": "EV battery degradation calculator. Estimate remaining capacity after years of driving. Free tool.",
+  "applicationCategory": "UtilityApplication",
+  "operatingSystem": "Any"
+}
+</script>
+</head>
+<body>
+<header><div class="header-inner"><div class="logo">EV<span>Calc</span></div><div class="tagline">Free EV calculators</div></div></header>
+<nav><div class="nav-inner"><a href="index.html">EVCalc</a><span class="sep">/</span><span>Battery Degradation Estimator</span></div></nav>
+<main>
+  <div class="ad-leaderboard" id="ad-top">Ad</div>
+  <div class="card">
+    <h1>Battery Degradation Estimator</h1>
+    <p class="subtitle">Enter mileage or years to estimate battery health over time.</p>
+    <div class="form-grid">
+      <div class="field">
+        <label for="orig_range">Original range (miles)</label>
+        <input type="number" id="orig_range" step="1" placeholder="300">
+      </div>
+      <div class="field">
+        <label for="years">Vehicle age (years)</label>
+        <input type="number" id="years" step="1" placeholder="5">
+      </div>
+      <div class="field">
+        <label for="annual_miles">Annual mileage</label>
+        <input type="number" id="annual_miles" step="1000" placeholder="12000" value="12000">
+      </div>
+      <div class="field">
+        <label for="climate">Climate</label>
+        <select id="climate"><option value="mild">Mild (50–85°F avg)</option><option value="hot">Hot (85°F+ avg)</option><option value="cold">Cold (below 40°F avg)</option></select>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="calculate()">Calculate</button>
+    <button class="btn btn-ghost" onclick="clearAll()">Clear</button>
+    <div class="result" id="result">
+      <div class="result-row">
+        <span class="result-label">Estimated capacity remaining</span>
+        <span class="result-value" id="bd-pct">—</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Estimated current range</span>
+        <span class="result-value" id="bd-range">—</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Capacity lost</span>
+        <span class="result-value" id="bd-loss">—</span>
+      </div>
+      <div class="result-note">Most EV batteries degrade 2–3% per year or about 1% per 10,000 miles. Hot climates accelerate degradation. Most manufacturers warrant 70–80% capacity at 8 years/100K miles.</div>
+    </div>
+  </div>
+
+  <div class="ad-rectangle" id="ad-mid">Ad</div>
+  <div class="seo-section">
+    <h2>How Fast Do EV Batteries Degrade?</h2>
+    <p>EV battery degradation averages 2–3% per year for most modern lithium-ion batteries. After 5 years, most EVs retain 85–90% of their original capacity.</p>
+    <p>Heat is the biggest enemy of battery longevity. Avoiding frequent DC fast charging and not keeping the battery at 100% for extended periods also helps preserve battery health.</p>
+  </div>
+</main>
+<footer>Free EV calculators. No signup, no tracking. Actual values vary by vehicle, battery condition, and driving habits.<br>Built by <a href="https://thehivemakes.github.io/" style="color:var(--accent)">The Hive</a></footer>
+<script>
+
+function calculate() {
+  const origRange = CalcCore.get('orig_range');
+  const years = CalcCore.get('years');
+  const miles = CalcCore.get('annual_miles');
+  const climate = CalcCore.getSelect('climate');
+  if (isNaN(origRange)||isNaN(years)||origRange<=0||years<0) return;
+
+  let annualDeg = 0.025;
+  if (climate === 'hot') annualDeg = 0.035;
+  if (climate === 'cold') annualDeg = 0.020;
+
+  const totalMiles = years * (miles || 12000);
+  const mileDeg = totalMiles * 0.00001;
+  const remaining = Math.max(0.5, 1 - (annualDeg * years) - mileDeg);
+  const currentRange = origRange * remaining;
+
+  CalcCore.set('bd-pct', CalcCore.fmt(remaining*100, 1) + '%');
+  CalcCore.set('bd-range', CalcCore.fmtInt(currentRange) + ' miles');
+  CalcCore.set('bd-loss', CalcCore.fmt((1-remaining)*100, 1) + '% degraded');
+  CalcCore.showResult();
+  CalcCore.saveParams(['orig_range','years','annual_miles','climate']);
+}
+
+function clearAll() {
+  ["orig_range", "years", "annual_miles", "climate"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = el.defaultValue || '';
+  });
+  document.getElementById('result').classList.remove('visible');
+  history.replaceState(null, '', window.location.pathname);
+}
+
+document.addEventListener('DOMContentLoaded', () => { if (window.location.search) calculate(); });
+</script>
+</body>
+</html>

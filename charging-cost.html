@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Charging Cost Calculator — EVCalc</title>
+<meta name="description" content="EV charging cost calculator. Find cost per charge and cost per mile at any electricity rate. Compare home vs public charging. Free tool.">
+<meta property="og:title" content="Charging Cost Calculator — EVCalc">
+<meta property="og:description" content="EV charging cost calculator. Find cost per charge and cost per mile at any electricity rate. Compare home vs public charging. Free tool.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://thehivemakes.github.io/hive-ev-calc/charging-cost.html">
+<link rel="stylesheet" href="style.css">
+<script src="js/calc-core.js"></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Charging Cost Calculator",
+  "url": "https://thehivemakes.github.io/hive-ev-calc/charging-cost.html",
+  "description": "EV charging cost calculator. Find cost per charge and cost per mile at any electricity rate. Compare home vs public charging. Free tool.",
+  "applicationCategory": "UtilityApplication",
+  "operatingSystem": "Any"
+}
+</script>
+</head>
+<body>
+<header><div class="header-inner"><div class="logo">EV<span>Calc</span></div><div class="tagline">Free EV calculators</div></div></header>
+<nav><div class="nav-inner"><a href="index.html">EVCalc</a><span class="sep">/</span><span>Charging Cost Calculator</span></div></nav>
+<main>
+  <div class="ad-leaderboard" id="ad-top">Ad</div>
+  <div class="card">
+    <h1>Charging Cost Calculator</h1>
+    <p class="subtitle">Enter electricity rate and battery details to find cost per charge and cost per mile.</p>
+    <div class="form-grid">
+      <div class="field">
+        <label for="cc_batt">Battery capacity (kWh)</label>
+        <input type="number" id="cc_batt" step="1" placeholder="75">
+      </div>
+      <div class="field">
+        <label for="cc_from">Charge from (%)</label>
+        <input type="number" id="cc_from" step="1" placeholder="20" value="20">
+      </div>
+      <div class="field">
+        <label for="cc_to">Charge to (%)</label>
+        <input type="number" id="cc_to" step="1" placeholder="100" value="100">
+      </div>
+      <div class="field">
+        <label for="cc_rate">Electricity rate ($/kWh)</label>
+        <input type="number" id="cc_rate" step="0.01" placeholder="0.13" value="0.13">
+      </div>
+      <div class="field">
+        <label for="cc_eff_mi">Vehicle efficiency (mi/kWh)</label>
+        <input type="number" id="cc_eff_mi" step="0.1" placeholder="3.5" value="3.5">
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="calculate()">Calculate</button>
+    <button class="btn btn-ghost" onclick="clearAll()">Clear</button>
+    <div class="result" id="result">
+      <div class="result-row">
+        <span class="result-label">Energy for this charge</span>
+        <span class="result-value" id="cc-kwh">—</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Cost for this charge</span>
+        <span class="result-value" id="cc-cost">—</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Cost per mile (electric)</span>
+        <span class="result-value" id="cc-cpm">—</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Equivalent gas cost (at $3.50/gal, 30mpg)</span>
+        <span class="result-value" id="cc-vs-gas">—</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Savings vs gasoline</span>
+        <span class="result-value" id="cc-savings">—</span>
+      </div>
+      <div class="result-note">Cost = kWh × rate. Cost per mile = rate / efficiency. Average US residential electricity: $0.13/kWh. Average DC fast charging: $0.30–0.45/kWh.</div>
+    </div>
+  </div>
+
+  <div class="ad-rectangle" id="ad-mid">Ad</div>
+  <div class="seo-section">
+    <h2>How Much Does It Cost to Charge an EV?</h2>
+    <p>The cost to charge an EV depends on your electricity rate and the vehicle's efficiency. At the US average of $0.13/kWh, a full charge of a 75 kWh battery costs about $9.75.</p>
+    <p>Most EVs get 3–4 miles per kWh, making the cost per mile about $0.03–0.04. Compare that to a gas car at $3.50/gallon and 30 mpg: $0.117 per mile. EVs cost about 70% less per mile to fuel.</p>
+  </div>
+</main>
+<footer>Free EV calculators. No signup, no tracking. Actual values vary by vehicle, battery condition, and driving habits.<br>Built by <a href="https://thehivemakes.github.io/" style="color:var(--accent)">The Hive</a></footer>
+<script>
+
+function calculate() {
+  const batt = CalcCore.get('cc_batt');
+  const from = CalcCore.get('cc_from') / 100;
+  const to = CalcCore.get('cc_to') / 100;
+  const rate = CalcCore.get('cc_rate');
+  const eff = CalcCore.get('cc_eff_mi');
+  if (isNaN(batt)||isNaN(rate)||isNaN(eff)||batt<=0||rate<=0||eff<=0||from>=to) return;
+
+  const kwh = batt * (to - from);
+  const cost = kwh * rate;
+  const cpm = rate / eff;
+  const gasCpm = 3.50 / 30;
+  const savings = ((gasCpm - cpm) / gasCpm) * 100;
+
+  CalcCore.set('cc-kwh', CalcCore.fmt(kwh, 1) + ' kWh');
+  CalcCore.set('cc-cost', '$' + CalcCore.fmt(cost, 2));
+  CalcCore.set('cc-cpm', '$' + CalcCore.fmt(cpm, 3) + ' per mile');
+  CalcCore.set('cc-vs-gas', '$' + CalcCore.fmt(gasCpm, 3) + ' per mile');
+  CalcCore.set('cc-savings', CalcCore.fmt(savings, 0) + '% cheaper than gas');
+  CalcCore.showResult();
+  CalcCore.saveParams(['cc_batt','cc_from','cc_to','cc_rate','cc_eff_mi']);
+}
+
+function clearAll() {
+  ["cc_batt", "cc_from", "cc_to", "cc_rate", "cc_eff_mi"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = el.defaultValue || '';
+  });
+  document.getElementById('result').classList.remove('visible');
+  history.replaceState(null, '', window.location.pathname);
+}
+
+document.addEventListener('DOMContentLoaded', () => { if (window.location.search) calculate(); });
+</script>
+</body>
+</html>

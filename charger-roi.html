@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Home Charger ROI Calculator — EVCalc</title>
+<meta name="description" content="Home EV charger ROI calculator. Find payback period for Level 2 installation vs public charging. Free tool.">
+<meta property="og:title" content="Home Charger ROI Calculator — EVCalc">
+<meta property="og:description" content="Home EV charger ROI calculator. Find payback period for Level 2 installation vs public charging. Free tool.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://thehivemakes.github.io/hive-ev-calc/charger-roi.html">
+<link rel="stylesheet" href="style.css">
+<script src="js/calc-core.js"></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Home Charger ROI Calculator",
+  "url": "https://thehivemakes.github.io/hive-ev-calc/charger-roi.html",
+  "description": "Home EV charger ROI calculator. Find payback period for Level 2 installation vs public charging. Free tool.",
+  "applicationCategory": "UtilityApplication",
+  "operatingSystem": "Any"
+}
+</script>
+</head>
+<body>
+<header><div class="header-inner"><div class="logo">EV<span>Calc</span></div><div class="tagline">Free EV calculators</div></div></header>
+<nav><div class="nav-inner"><a href="index.html">EVCalc</a><span class="sep">/</span><span>Home Charger ROI Calculator</span></div></nav>
+<main>
+  <div class="ad-leaderboard" id="ad-top">Ad</div>
+  <div class="card">
+    <h1>Home Charger ROI Calculator</h1>
+    <p class="subtitle">Compare home charging cost vs. public charging to find your break-even point.</p>
+    <div class="form-grid">
+      <div class="field">
+        <label for="install_cost">Charger + installation cost ($)</label>
+        <input type="number" id="install_cost" step="100" placeholder="1500">
+      </div>
+      <div class="field">
+        <label for="home_rate">Home electricity ($/kWh)</label>
+        <input type="number" id="home_rate" step="0.01" placeholder="0.13" value="0.13">
+      </div>
+      <div class="field">
+        <label for="public_rate">Public charging ($/kWh)</label>
+        <input type="number" id="public_rate" step="0.01" placeholder="0.35" value="0.35">
+      </div>
+      <div class="field">
+        <label for="monthly_kwh">Monthly charging (kWh)</label>
+        <input type="number" id="monthly_kwh" step="10" placeholder="300" value="300">
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="calculate()">Calculate</button>
+    <button class="btn btn-ghost" onclick="clearAll()">Clear</button>
+    <div class="result" id="result">
+      <div class="result-row">
+        <span class="result-label">Monthly savings</span>
+        <span class="result-value" id="roi-monthly-save">—</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Annual savings</span>
+        <span class="result-value" id="roi-annual-save">—</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Payback period</span>
+        <span class="result-value" id="roi-payback">—</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">5-year net savings</span>
+        <span class="result-value" id="roi-5yr">—</span>
+      </div>
+      <div class="result-note">Savings = (public rate − home rate) × monthly kWh. Average US driver uses ~300 kWh/month for an EV. Home charging is typically 50–70% cheaper than public DC fast charging.</div>
+    </div>
+  </div>
+
+  <div class="ad-rectangle" id="ad-mid">Ad</div>
+  <div class="seo-section">
+    <h2>Is a Home EV Charger Worth It?</h2>
+    <p>A Level 2 home charger typically costs $500–1,500 for the unit plus $500–1,500 for installation. The savings come from charging at home electricity rates instead of public charging rates.</p>
+    <p>At $0.13/kWh home vs $0.35/kWh public, a driver using 300 kWh/month saves $66/month. The charger pays for itself in about 23 months, then saves $800+/year after that.</p>
+  </div>
+</main>
+<footer>Free EV calculators. No signup, no tracking. Actual values vary by vehicle, battery condition, and driving habits.<br>Built by <a href="https://thehivemakes.github.io/" style="color:var(--accent)">The Hive</a></footer>
+<script>
+
+function calculate() {
+  const cost = CalcCore.get('install_cost');
+  const home = CalcCore.get('home_rate');
+  const pub = CalcCore.get('public_rate');
+  const kwh = CalcCore.get('monthly_kwh');
+  if (isNaN(cost)||isNaN(home)||isNaN(pub)||isNaN(kwh)||cost<=0||kwh<=0) return;
+
+  const monthlySave = (pub - home) * kwh;
+  const annualSave = monthlySave * 12;
+  const payback = monthlySave > 0 ? cost / monthlySave : Infinity;
+  const fiveYr = (annualSave * 5) - cost;
+
+  CalcCore.set('roi-monthly-save', '$' + CalcCore.fmt(monthlySave, 2) + '/month');
+  CalcCore.set('roi-annual-save', '$' + CalcCore.fmt(annualSave, 2) + '/year');
+  CalcCore.set('roi-payback', payback < 120 ? CalcCore.fmt(payback, 1) + ' months' : 'Not cost-effective at these rates');
+  CalcCore.set('roi-5yr', '$' + CalcCore.fmt(fiveYr, 2) + (fiveYr > 0 ? ' net savings' : ' net cost'));
+  CalcCore.showResult();
+  CalcCore.saveParams(['install_cost','home_rate','public_rate','monthly_kwh']);
+}
+
+function clearAll() {
+  ["install_cost", "home_rate", "public_rate", "monthly_kwh"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = el.defaultValue || '';
+  });
+  document.getElementById('result').classList.remove('visible');
+  history.replaceState(null, '', window.location.pathname);
+}
+
+document.addEventListener('DOMContentLoaded', () => { if (window.location.search) calculate(); });
+</script>
+</body>
+</html>
