@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://ev.thehivemakes.com/</loc><priority>1.0</priority></url>
-  <url><loc>https://ev.thehivemakes.com/charging-time.html</loc><priority>0.8</priority></url>
-  <url><loc>https://ev.thehivemakes.com/charging-cost.html</loc><priority>0.8</priority></url>
-  <url><loc>https://ev.thehivemakes.com/range-impact.html</loc><priority>0.8</priority></url>
-  <url><loc>https://ev.thehivemakes.com/battery-degradation.html</loc><priority>0.8</priority></url>
-  <url><loc>https://ev.thehivemakes.com/charger-roi.html</loc><priority>0.8</priority></url>
+  <url><loc>https://thehivemakes.github.io/hive-ev-calc/</loc><priority>1.0</priority></url>
+  <url><loc>https://thehivemakes.github.io/hive-ev-calc/charging-time.html</loc><priority>0.8</priority></url>
+  <url><loc>https://thehivemakes.github.io/hive-ev-calc/charging-cost.html</loc><priority>0.8</priority></url>
+  <url><loc>https://thehivemakes.github.io/hive-ev-calc/range-impact.html</loc><priority>0.8</priority></url>
+  <url><loc>https://thehivemakes.github.io/hive-ev-calc/battery-degradation.html</loc><priority>0.8</priority></url>
+  <url><loc>https://thehivemakes.github.io/hive-ev-calc/charger-roi.html</loc><priority>0.8</priority></url>
 </urlset>

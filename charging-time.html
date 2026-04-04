@@ -8,7 +8,7 @@
 <meta property="og:title" content="Charging Time Calculator — EVCalc">
 <meta property="og:description" content="EV charging time calculator. Enter battery size and charger power to find charge duration. Level 1, 2, and DC fast. Free tool.">
 <meta name="robots" content="index, follow">
-<link rel="canonical" href="https://ev.thehivemakes.com/charging-time.html">
+<link rel="canonical" href="https://thehivemakes.github.io/hive-ev-calc/charging-time.html">
 <link rel="stylesheet" href="style.css">
 <script src="js/calc-core.js"></script>
 <script type="application/ld+json">
@@ -16,7 +16,7 @@
   "@context": "https://schema.org",
   "@type": "WebApplication",
   "name": "Charging Time Calculator",
-  "url": "https://ev.thehivemakes.com/charging-time.html",
+  "url": "https://thehivemakes.github.io/hive-ev-calc/charging-time.html",
   "description": "EV charging time calculator. Enter battery size and charger power to find charge duration. Level 1, 2, and DC fast. Free tool.",
   "applicationCategory": "UtilityApplication",
   "operatingSystem": "Any"
@@ -70,6 +70,17 @@
       </div>
       <div class="result-note">Time = (kWh needed) / (charger kW × efficiency). DC fast charging slows above 80% SOC. Level 1 is best for overnight top-ups. Level 2 is the home charging sweet spot.</div>
     </div>
+  </div>
+  <div class="card email-capture">
+    <h2>Get your results + weekly EV tips</h2>
+    <p>One email per week. Tips, tool deals, new calculators. Unsubscribe anytime.</p>
+    <form method="POST" action="https://buttondown.com/api/emails/embed-subscribe/thehivemakes" class="capture-form">
+      <input type="email" name="email" placeholder="your@email.com" required>
+      <input type="hidden" name="tag" value="ev">
+      <input type="hidden" name="metadata__source" value="charging-time">
+      <button type="submit" class="btn btn-primary">Send My Results</button>
+    </form>
+    <p class="capture-note">Free tools, useful tips. We recommend products we'd actually use.</p>
   </div>
   <div class="card">
     <h2 style="font-size:16px;font-weight:700;margin-bottom:12px;">Charger Speeds</h2>
