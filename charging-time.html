@@ -8,7 +8,7 @@
 <meta property="og:title" content="Charging Time Calculator — EVCalc">
 <meta property="og:description" content="EV charging time calculator. Enter battery size and charger power to find charge duration. Level 1, 2, and DC fast. Free tool.">
 <meta name="robots" content="index, follow">
-<link rel="canonical" href="https://thehivemakes.github.io/hive-ev-calc/charging-time.html">
+<link rel="canonical" href="https://ev.thehivemakes.com/charging-time.html">
 <link rel="stylesheet" href="style.css">
 <script src="js/calc-core.js"></script>
 <script type="application/ld+json">
@@ -16,7 +16,7 @@
   "@context": "https://schema.org",
   "@type": "WebApplication",
   "name": "Charging Time Calculator",
-  "url": "https://thehivemakes.github.io/hive-ev-calc/charging-time.html",
+  "url": "https://ev.thehivemakes.com/charging-time.html",
   "description": "EV charging time calculator. Enter battery size and charger power to find charge duration. Level 1, 2, and DC fast. Free tool.",
   "applicationCategory": "UtilityApplication",
   "operatingSystem": "Any"
@@ -102,6 +102,12 @@
     <h2>How Long Does It Take to Charge an EV?</h2>
     <p>EV charging time depends on three factors: battery size, charger power, and charging efficiency. A 75 kWh battery charging from 20% to 80% needs 45 kWh of energy.</p>
     <p>At Level 2 (7.7 kW), that takes about 6.5 hours. At a 150 kW DC fast charger, about 20 minutes. DC fast charging slows significantly above 80% state of charge to protect the battery.</p>
+  
+    <p>Charging time = (battery capacity in kWh × depth of discharge) / charger power (kW). A 75 kWh battery at 20% state of charge (80% depth of discharge) on a 7.2 kW Level 2 charger: time = (75 × 0.80) / 7.2 = 60 / 7.2 = 8.3 hours to full charge.</p>
+    <p>Charger levels: Level 1 (120V/12A) delivers 1.4 kW — adds 4–5 miles of range per hour, sufficient for overnight top-ups for short daily commuters. Level 2 (240V) delivers 3.3–19.2 kW depending on vehicle's onboard charger and EVSE rating — 20–60+ miles per hour. DC Fast Charging (DCFC) delivers 50–350 kW directly to the battery — 150–250 miles in 20–30 minutes for compatible vehicles.</p>
+    <p>Onboard charger limitation: even if your EVSE delivers 11.5 kW, the car can only accept what its onboard AC-DC converter allows. A car with a 7.2 kW onboard charger will charge at 7.2 kW maximum on any Level 2 EVSE above that rating. Fast DC charging bypasses the onboard charger entirely.</p>
+    <p>Battery management system (BMS) slows charging near 80% and below 20% to protect cell chemistry. Practical charging from 20%–80% is faster than the displayed average; slowing near the top means 0–100% takes significantly longer than the midrange rate implies.</p>
+    <p>See also: <a href="charging-cost.html">Charging Cost Calculator</a> · <a href="range-impact.html">Range Impact Calculator</a></p>
   </div>
 </main>
 <footer>Free EV calculators. No signup, no tracking. Actual values vary by vehicle, battery condition, and driving habits.<br>Built by <a href="https://thehivemakes.com" style="color:var(--accent)">The Hive</a> · <a href="https://thehivemakes.com/privacy.html" style="color:var(--muted);font-size:11px;">Privacy</a> · <a href="https://thehivemakes.com/terms.html" style="color:var(--muted);font-size:11px;">Terms</a> · <a href="https://thehivemakes.com/disclosures.html" style="color:var(--muted);font-size:11px;">Disclosures</a></footer>
